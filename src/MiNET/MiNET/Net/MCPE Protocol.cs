@@ -2256,6 +2256,7 @@ namespace MiNET.Net
 			forceServerPacks = ReadBool();
 			behahaviorpackinfos = ReadResourcePackInfos();
 			texturepacks = ReadTexturePackInfos();
+			_ = ReadUnsignedVarInt();
 
 			AfterDecode();
 		}

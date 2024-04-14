@@ -38,6 +38,7 @@ using log4net;
 using MiNET.Net;
 using MiNET.Plugins.Attributes;
 using MiNET.Plugins.Commands;
+using MiNET.Plugins.Samples;
 using MiNET.Utils;
 using MiNET.Worlds;
 using Newtonsoft.Json;
@@ -72,6 +73,8 @@ namespace MiNET.Plugins
 
 		internal void LoadPlugins()
 		{
+			LoadPlugin(new SamplePlugin());
+
 			if (Config.GetProperty("PluginDisabled", false)) return;
 			LoadCommands(new VanillaCommands());
 			// Default it is the directory we are executing, and below.

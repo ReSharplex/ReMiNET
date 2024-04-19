@@ -373,5 +373,17 @@ namespace MiNET
 
 			Player.SendPlayerInventory();
 		}
+
+		public void ClearOffHand()
+		{
+			OffHand = new ItemAir();
+			Player.SendPlayerInventory();
+		}
+
+		public void ClearInHand()
+		{
+			Slots[InHandSlot] = new ItemAir();
+			Player.SendPlayerInventory();
+		}
 	}
 }

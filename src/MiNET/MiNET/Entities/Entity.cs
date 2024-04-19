@@ -643,7 +643,7 @@ namespace MiNET.Entities
 		{
 			var entityEvent = McpeEntityEvent.CreateObject();
 			entityEvent.runtimeEntityId = EntityId;
-			entityEvent.eventId = (byte) (HealthManager.Health <= 0 ? 3 : 2);
+			entityEvent.eventId = (byte) (HealthManager.Health <= 0 ? 3 : 2); // animation like jump, or death animation 
 			Level.RelayBroadcast(entityEvent);
 		}
 

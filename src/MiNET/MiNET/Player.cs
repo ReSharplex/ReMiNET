@@ -889,7 +889,7 @@ namespace MiNET
 					MovementSpeed = _baseSpeed;
 				}
 
-				SendUpdateAttributes();
+				SetMovementSpeedAttribute();
 			}
 		}
 
@@ -1174,7 +1174,7 @@ namespace MiNET
 
 				Level.AddPlayer(this, false);
 
-				SendUpdateAttributes();
+				SetUpdateAttributes();
 
 				SendPlayerInventory();
 
@@ -1390,7 +1390,7 @@ namespace MiNET
 
 				BroadcastSetEntityData();
 
-				SendUpdateAttributes();
+				SetUpdateAttributes();
 
 				SendSetSpawnPosition();
 
@@ -1563,7 +1563,7 @@ namespace MiNET
 
 			BroadcastSetEntityData();
 
-			SendUpdateAttributes();
+			SetUpdateAttributes();
 
 			CleanCache();
 
@@ -1953,7 +1953,7 @@ namespace MiNET
 
 				BroadcastSetEntityData();
 
-				SendUpdateAttributes();
+				SetUpdateAttributes();
 
 				SendSetSpawnPosition();
 
@@ -3521,10 +3521,67 @@ namespace MiNET
 			}
 		}
 
-		public virtual void SendUpdateAttributes()
+		public void SetHealth(int health)
+		{
+			if (health <= 0)
+			{
+				HealthManager.Kill();
+				return;
+			}
+			else if (HealthManager.Health == health * 10)
+			{
+				return;
+			}
+			else
+			{
+				HealthManager.Health = health * 10;// TODO gonna later refactor some health parts
+
+				SetHealthAttibute();
+			}
+		}
+
+		public void SetHealthAttibute()
+		{
+			var attr = new PlayerAttribute(McpeAttribute.MaxHealth)
+			{
+				MinValue = 0,
+				MaxValue = HealthManager.MaxHearts,
+				Value = HealthManager.Hearts,
+				Default = HealthManager.MaxHearts,
+				Modifiers = new AttributeModifiers()
+			};
+
+			var attributes = new PlayerAttributes() { { attr.Name, attr } };
+			SetAttributes(attributes);
+		}
+
+		public void SetMovementSpeedAttribute()
+		{
+			var attr = new PlayerAttribute(McpeAttribute.MovementSpeed)
+			{
+				MinValue = 0,
+				MaxValue = 0.5f,
+				Value = MovementSpeed,
+				Default = MovementSpeed,
+				Modifiers = new AttributeModifiers()
+			};
+
+			var attributes = new PlayerAttributes() { { attr.Name, attr } };
+			SetAttributes(attributes);
+		}
+
+		public void SetAttributes(PlayerAttributes attributes)
+		{
+			var pk = new McpeUpdateAttributes();
+			pk.runtimeEntityId = EntityManager.EntityIdSelf;
+			pk.attributes = attributes;
+			SendPacket(pk);
+		}
+
+		public void SetUpdateAttributes()
 		{
 			var attributes = new PlayerAttributes();
-			attributes["minecraft:attack_damage"] = new PlayerAttribute
+			var attrAttackDamage = new PlayerAttribute(McpeAttribute.AttackDamage)
 			{
 				Name = "minecraft:attack_damage",
 				MinValue = 1,
@@ -3533,7 +3590,7 @@ namespace MiNET
 				Default = 1,
 				Modifiers = new AttributeModifiers()
 			};
-			attributes["minecraft:absorption"] = new PlayerAttribute
+			var attrAbsorption = new PlayerAttribute(McpeAttribute.Absorption)
 			{
 				Name = "minecraft:absorption",
 				MinValue = 0,
@@ -3542,7 +3599,7 @@ namespace MiNET
 				Default = 0,
 				Modifiers = new AttributeModifiers()
 			};
-			attributes["minecraft:health"] = new PlayerAttribute
+			var attrMaxHealth = new PlayerAttribute(McpeAttribute.MaxHealth)
 			{
 				Name = "minecraft:health",
 				MinValue = 0,
@@ -3551,7 +3608,7 @@ namespace MiNET
 				Default = HealthManager.MaxHearts,
 				Modifiers = new AttributeModifiers()
 			};
-			attributes["minecraft:movement"] = new PlayerAttribute
+			var attrMovementSpeed = new PlayerAttribute(McpeAttribute.MovementSpeed)
 			{
 				Name = "minecraft:movement",
 				MinValue = 0,
@@ -3560,7 +3617,7 @@ namespace MiNET
 				Default = MovementSpeed,
 				Modifiers = new AttributeModifiers()
 			};
-			attributes["minecraft:knockback_resistance"] = new PlayerAttribute
+			var attrKnockbackResistance = new PlayerAttribute(McpeAttribute.KnockbackResistance)
 			{
 				Name = "minecraft:knockback_resistance",
 				MinValue = 0,
@@ -3569,7 +3626,7 @@ namespace MiNET
 				Default = 0,
 				Modifiers = new AttributeModifiers()
 			};
-			attributes["minecraft:luck"] = new PlayerAttribute
+			var attrLuck = new PlayerAttribute(McpeAttribute.Luck)
 			{
 				Name = "minecraft:luck",
 				MinValue = -1025,
@@ -3578,7 +3635,7 @@ namespace MiNET
 				Default = 0,
 				Modifiers = new AttributeModifiers()
 			};
-			attributes["minecraft:follow_range"] = new PlayerAttribute
+			var attrFollowRange = new PlayerAttribute(McpeAttribute.FollowRange)
 			{
 				Name = "minecraft:follow_range",
 				MinValue = 0,
@@ -3587,14 +3644,20 @@ namespace MiNET
 				Default = 16,
 				Modifiers = new AttributeModifiers()
 			};
-			// Workaround, bad design.
-			attributes = HungerManager.AddHungerAttributes(attributes);
-			attributes = ExperienceManager.AddExperienceAttributes(attributes);
 
-			McpeUpdateAttributes attributesPackate = McpeUpdateAttributes.CreateObject();
-			attributesPackate.runtimeEntityId = EntityManager.EntityIdSelf;
-			attributesPackate.attributes = attributes;
-			SendPacket(attributesPackate);
+			attributes.Add(attrAttackDamage.Name, attrAttackDamage);
+			attributes.Add(attrAbsorption.Name, attrAbsorption);
+			attributes.Add(attrMaxHealth.Name, attrMaxHealth);
+			attributes.Add(attrMovementSpeed.Name, attrMovementSpeed);
+			attributes.Add(attrKnockbackResistance.Name, attrKnockbackResistance);
+			attributes.Add(attrLuck.Name, attrLuck);
+			attributes.Add(attrFollowRange.Name, attrFollowRange);
+
+			// Workaround, bad design.
+			HungerManager.AddHungerAttributes(attributes);
+			ExperienceManager.AddExperienceAttributes(attributes);
+
+			SetAttributes(attributes);
 		}
 
 		public virtual void SendForm(Form form)

@@ -70,7 +70,7 @@ namespace MiNET
 
 		public virtual PlayerAttributes AddExperienceAttributes(PlayerAttributes attributes)
 		{
-			attributes["minecraft:player.experience"] = new PlayerAttribute
+			var attrExperience = new PlayerAttribute(McpeAttribute.Experience)
 			{
 				Name = "minecraft:player.experience",
 				MinValue = 0,
@@ -79,7 +79,7 @@ namespace MiNET
 				Default = 0,
 				Modifiers = new AttributeModifiers()
 			};
-			attributes["minecraft:player.level"] = new PlayerAttribute
+			var attrExperienceLevel = new PlayerAttribute(McpeAttribute.ExperienceLevel)
 			{
 				Name = "minecraft:player.level",
 				MinValue = 0,
@@ -88,6 +88,10 @@ namespace MiNET
 				Default = 0,
 				Modifiers = new AttributeModifiers()
 			};
+
+			attributes.Add(attrExperience.Name, attrExperience);
+			attributes.Add(attrExperienceLevel.Name, attrExperienceLevel);
+
 			return attributes;
 		}
 

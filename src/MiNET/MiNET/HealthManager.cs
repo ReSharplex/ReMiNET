@@ -29,6 +29,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Threading.Tasks;
 using log4net;
+using MiNET.Effects;
 using MiNET.Entities;
 using MiNET.Items;
 using MiNET.Net;
@@ -112,12 +113,12 @@ namespace MiNET
 		public virtual void Regen(int amount = 1)
 		{
 			Health += amount * 10;
-			if (Health > MaxHealth) Health = MaxHealth;
+			if (Health > MaxHealth)
+				Health = MaxHealth;
 
-			var player = Entity as Player;
-			if (player != null)
+			if (Entity is Player player)
 			{
-				player.SendUpdateAttributes();
+				player.SetHealthAttibute();
 			}
 		}
 
@@ -129,13 +130,12 @@ namespace MiNET
 		public virtual void TakeHit(Entity source, Item tool, int damage = 1, DamageCause cause = DamageCause.Unknown)
 		{
 			var player = Entity as Player;
-			if (player != null && player.GameMode != GameMode.Survival) return;
-
-
-			if (CooldownTick > 0) return;
+			if ((player != null && player.GameMode != GameMode.Survival) || CooldownTick > 0)
+				return;
 
 			LastDamageSource = source;
 			LastDamageCause = cause;
+
 			if (Absorption > 0)
 			{
 				float abs = Absorption * 10;
@@ -154,8 +154,10 @@ namespace MiNET
 
 			if (cause == DamageCause.Starving)
 			{
-				if (Entity.Level.Difficulty <= Difficulty.Easy && Hearts <= 10) return;
-				if (Entity.Level.Difficulty <= Difficulty.Normal && Hearts <= 1) return;
+				if (Entity.Level.Difficulty <= Difficulty.Easy && Hearts <= 10)
+					return;
+				if (Entity.Level.Difficulty <= Difficulty.Normal && Hearts <= 1)
+					return;
 			}
 
 			Health -= damage * 10;
@@ -163,6 +165,46 @@ namespace MiNET
 			{
 				OnPlayerTakeHit(new HealthEventArgs(this, source, Entity));
 				Health = 0;
+
+				if (player is not null && cause is not DamageCause.Void and not DamageCause.Suicide)
+				{
+					var isTotemActive = false;
+					if (player.Inventory.OffHand is not ItemAir and ItemTotemOfUndying)
+					{
+						McpeEntityEvent pk = McpeEntityEvent.CreateObject();
+						pk.runtimeEntityId = EntityManager.EntityIdSelf;
+						pk.eventId = 65;
+						player.SendPacket(pk);
+
+						player.Inventory.ClearOffHand();
+						isTotemActive = true;
+					}
+					else if (player.Inventory.GetItemInHand() is not ItemAir and ItemTotemOfUndying)
+					{
+						McpeEntityEvent pk = McpeEntityEvent.CreateObject();
+						pk.runtimeEntityId = EntityManager.EntityIdSelf;
+						pk.eventId = 65;
+						player.SendPacket(pk);
+
+						player.Inventory.ClearInHand();
+						isTotemActive = true;
+					}
+
+					if (isTotemActive)
+					{
+						// TODO sound, extinguish
+
+						player.SetHealth(2);
+
+						player.RemoveAllEffects();
+
+						player.SetEffect(new Regeneration() { Duration = 800, Level = 1 });
+						player.SetEffect(new FireResistance() { Duration = 800});
+						player.SetEffect(new Absorption() { Duration = 100, Level = 1 });
+						return;
+					}
+				}
+
 				Kill();
 				return;
 			}
@@ -171,7 +213,7 @@ namespace MiNET
 			{
 				player.HungerManager.IncreaseExhaustion(0.3f);
 
-				player.SendUpdateAttributes();
+				player.SetHealthAttibute();
 			}
 
 			Entity.BroadcastEntityEvent();
@@ -229,12 +271,14 @@ namespace MiNET
 		protected virtual void OnPlayerTakeHit(HealthEventArgs e)
 		{
 			EventHandler<HealthEventArgs> handler = PlayerTakeHit;
-			if (handler != null) handler(this, e);
+			if (handler != null)
+				handler(this, e);
 		}
 
 		public virtual void Ignite(int ticks = 300)
 		{
-			if (IsDead) return;
+			if (IsDead)
+				return;
 
 			Player player = Entity as Player;
 			if (player != null)
@@ -258,7 +302,8 @@ namespace MiNET
 		{
 			lock (_killSync)
 			{
-				if (IsDead) return;
+				if (IsDead)
+					return;
 				IsDead = true;
 
 				Health = 0;
@@ -267,7 +312,7 @@ namespace MiNET
 			var player = Entity as Player;
 			if (player != null)
 			{
-				player.SendUpdateAttributes();
+				player.SetHealthAttibute();
 			}
 
 			Entity.BroadcastEntityEvent();
@@ -306,7 +351,7 @@ namespace MiNET
 				}
 
 				// This is semi-good, but we need to give the death-animation time to play.
-				
+
 				_ = SendWithDelay(2000, () =>
 				{
 					Entity.BroadcastSetEntityData();
@@ -337,9 +382,11 @@ namespace MiNET
 
 		public virtual void OnTick()
 		{
-			if (!Entity.IsSpawned) return;
+			if (!Entity.IsSpawned)
+				return;
 
-			if (IsDead) return;
+			if (IsDead)
+				return;
 
 			if (CooldownTick > 0)
 			{
@@ -350,7 +397,8 @@ namespace MiNET
 				LastDamageSource = null;
 			}
 
-			if (IsInvulnerable) Health = MaxHealth;
+			if (IsInvulnerable)
+				Health = MaxHealth;
 
 			if (Health <= 0)
 			{
@@ -474,7 +522,8 @@ namespace MiNET
 
 		public bool IsInWater(PlayerLocation playerPosition)
 		{
-			if (playerPosition.Y < 0 || playerPosition.Y > 255) return false;
+			if (playerPosition.Y < 0 || playerPosition.Y > 255)
+				return false;
 
 			float y = playerPosition.Y + 1.62f;
 
@@ -487,36 +536,42 @@ namespace MiNET
 
 			var block = Entity.Level.GetBlock(waterPos);
 
-			if (block == null || (block.Id != 8 && block.Id != 9)) return false;
+			if (block == null || (block.Id != 8 && block.Id != 9))
+				return false;
 
 			return y < Math.Floor(y) + 1 - ((1f / 9f) - 0.1111111);
 		}
 
 		public bool IsStandingInWater(PlayerLocation playerPosition)
 		{
-			if (playerPosition.Y < 0 || playerPosition.Y > 255) return false;
+			if (playerPosition.Y < 0 || playerPosition.Y > 255)
+				return false;
 
 			var block = Entity.Level.GetBlock(playerPosition);
 
-			if (block == null || (block.Id != 8 && block.Id != 9)) return false;
+			if (block == null || (block.Id != 8 && block.Id != 9))
+				return false;
 
 			return playerPosition.Y < Math.Floor(playerPosition.Y) + 1 - ((1f / 9f) - 0.1111111);
 		}
 
 		private bool IsInLava(PlayerLocation playerPosition)
 		{
-			if (playerPosition.Y < 0 || playerPosition.Y > 255) return false;
+			if (playerPosition.Y < 0 || playerPosition.Y > 255)
+				return false;
 
 			var block = Entity.Level.GetBlock(playerPosition);
 
-			if (block == null || (block.Id != 10 && block.Id != 11)) return false;
+			if (block == null || (block.Id != 10 && block.Id != 11))
+				return false;
 
 			return playerPosition.Y < Math.Floor(playerPosition.Y) + 1 - ((1f / 9f) - 0.1111111);
 		}
 
 		private bool IsInOpaque(PlayerLocation playerPosition)
 		{
-			if (playerPosition.Y < 0 || playerPosition.Y > 255) return false;
+			if (playerPosition.Y < 0 || playerPosition.Y > 255)
+				return false;
 
 			BlockCoordinates solidPos = (BlockCoordinates) playerPosition;
 			if (Entity.Height >= 1)
@@ -526,7 +581,8 @@ namespace MiNET
 
 			var block = Entity.Level.GetBlock(solidPos);
 
-			if (block == null) return false;
+			if (block == null)
+				return false;
 
 			return !block.IsTransparent;
 		}

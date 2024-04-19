@@ -200,7 +200,7 @@ namespace MiNET
 
 		public virtual PlayerAttributes AddHungerAttributes(PlayerAttributes attributes)
 		{
-			attributes["minecraft:player.hunger"] = new PlayerAttribute
+			var attrMaxHunger = new PlayerAttribute(McpeAttribute.MaxHunger)
 			{
 				Name = "minecraft:player.hunger",
 				MinValue = MinHunger,
@@ -210,7 +210,7 @@ namespace MiNET
 				Modifiers = new AttributeModifiers()
 			};
 
-			attributes["minecraft:player.saturation"] = new PlayerAttribute
+			var attrSaturation = new PlayerAttribute(McpeAttribute.Saturation)
 			{
 				Name = "minecraft:player.saturation",
 				MinValue = 0,
@@ -219,7 +219,7 @@ namespace MiNET
 				Default = MaxHunger,
 				Modifiers = new AttributeModifiers()
 			};
-			attributes["minecraft:player.exhaustion"] = new PlayerAttribute
+			var attrExhaustion = new PlayerAttribute(McpeAttribute.Exhaustion)
 			{
 				Name = "minecraft:player.exhaustion",
 				MinValue = 0,
@@ -228,6 +228,10 @@ namespace MiNET
 				Default = 5,
 				Modifiers = new AttributeModifiers()
 			};
+
+			attributes.Add(attrMaxHunger.Name, attrMaxHunger);
+			attributes.Add(attrSaturation.Name, attrSaturation);
+			attributes.Add(attrExhaustion.Name, attrExhaustion);
 
 			return attributes;
 		}

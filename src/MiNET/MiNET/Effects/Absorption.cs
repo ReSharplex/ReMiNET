@@ -38,7 +38,7 @@ namespace MiNET.Effects
 		{
 			base.SendAdd(player);
 			player.HealthManager.Absorption = 4 * (Level + 1);
-			player.SendUpdateAttributes();
+			player.SetUpdateAttributes();
 		}
 
 		public override void OnTick(Player player)
@@ -57,7 +57,7 @@ namespace MiNET.Effects
 		{
 			base.SendRemove(player);
 			player.HealthManager.Absorption = 0;
-			player.SendUpdateAttributes();
+			player.SetUpdateAttributes();
 		}
 	}
 }

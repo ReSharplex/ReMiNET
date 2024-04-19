@@ -39,7 +39,7 @@ namespace MiNET.Effects
 		public override void SendAdd(Player player)
 		{
 			player.MovementSpeed = (float) (0.1 - (Level + 1) * _multiplier);
-			player.SendUpdateAttributes();
+			player.SetUpdateAttributes();
 
 			base.SendAdd(player);
 		}
@@ -47,7 +47,7 @@ namespace MiNET.Effects
 		public override void SendUpdate(Player player)
 		{
 			player.MovementSpeed = (float) (0.1 - (Level + 1) * _multiplier);
-			player.SendUpdateAttributes();
+			player.SetUpdateAttributes();
 
 			base.SendUpdate(player);
 		}
@@ -55,7 +55,7 @@ namespace MiNET.Effects
 		public override void SendRemove(Player player)
 		{
 			player.MovementSpeed = 0.1f;
-			player.SendUpdateAttributes();
+			player.SetUpdateAttributes();
 
 			base.SendRemove(player);
 		}

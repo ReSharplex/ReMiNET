@@ -23,6 +23,7 @@
 
 #endregion
 
+using System;
 using Newtonsoft.Json.Linq;
 
 namespace MiNET
@@ -51,10 +52,93 @@ namespace MiNET
 		public float Default { get; set; }
 		public AttributeModifiers Modifiers { get; set; }
 
+		public PlayerAttribute() { }
+
+		public PlayerAttribute(McpeAttribute attribute)
+		{
+			switch (attribute)
+			{
+				case McpeAttribute.Absorption:
+					Name = "minecraft:absorption";
+					break;
+				case McpeAttribute.Saturation:
+					Name = "minecraft:player.saturation";
+					break;
+				case McpeAttribute.Exhaustion:
+					Name = "minecraft:player.exhaustion";
+					break;
+				case McpeAttribute.KnockbackResistance:
+					Name = "minecraft:knockback_resistance";
+					break;
+				case McpeAttribute.MaxHealth:
+					Name = "minecraft:health";
+					break;
+				case McpeAttribute.MovementSpeed:
+					Name = "minecraft:movement";
+					break;
+				case McpeAttribute.FollowRange:
+					Name = "minecraft:follow_range";
+					break;
+				case McpeAttribute.MaxHunger:
+					Name = "minecraft:player.hunger";
+					break;
+				case McpeAttribute.AttackDamage:
+					Name = "minecraft:attack_damage";
+					break;
+				case McpeAttribute.ExperienceLevel:
+					Name = "minecraft:player.level";
+					break;
+				case McpeAttribute.Experience:
+					Name = "minecraft:player.experience";
+					break;
+				case McpeAttribute.UnderwaterMovement:
+					Name = "minecraft:underwater_movement";
+					break;
+				case McpeAttribute.Luck:
+					Name = "minecraft:luck";
+					break;
+				case McpeAttribute.FallDamage:
+					Name = "minecraft:fall_damage";
+					break;
+				case McpeAttribute.HorseJumpStrength:
+					Name = "minecraft:horse.jump_strength";
+					break;
+				case McpeAttribute.ZombieSpawnReinforcements:
+					Name = "minecraft:zombie.spawn_reinforcements";
+					break;
+				case McpeAttribute.LavaMovement:
+					Name = "minecraft:lava_movement";
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(attribute), attribute, "Invalid Minecraft attribute.");
+			}
+		}
+
 		public override string ToString()
 		{
 			return $"{{Name: {Name}, MinValue: {MinValue}, MaxValue: {MaxValue}, Value: {Value}, Default: {Default}}}";
 		}
+	}
+
+	public enum McpeAttribute
+	{
+		Absorption,
+		Saturation,
+		Exhaustion,
+		KnockbackResistance,
+		MaxHealth,
+		MovementSpeed,
+		FollowRange,
+		MaxHunger,
+		AttackDamage,
+		ExperienceLevel,
+		Experience,
+		UnderwaterMovement,
+		Luck,
+		FallDamage,
+		HorseJumpStrength,
+		ZombieSpawnReinforcements,
+		LavaMovement
 	}
 
 	public class EntityAttribute

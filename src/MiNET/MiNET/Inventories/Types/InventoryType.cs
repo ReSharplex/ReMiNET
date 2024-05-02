@@ -21,7 +21,7 @@
 // All Rights Reserved.
 #endregion
 
-namespace MiNET.Inventories;
+namespace MiNET.Inventories.Types;
 
 public enum InventoryType
 {

@@ -23,6 +23,7 @@
 
 using fNbt;
 using MiNET.BlockEntities;
+using MiNET.Inventories.Types;
 using MiNET.Net;
 using MiNET.Worlds;
 

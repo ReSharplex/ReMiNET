@@ -27,6 +27,7 @@ using System.Drawing;
 using fNbt;
 using log4net;
 using MiNET.BlockEntities;
+using MiNET.Inventories.Types;
 using MiNET.Items;
 using MiNET.Net;
 using MiNET.Utils;
@@ -124,12 +125,14 @@ public class Inventory2 : IInventory2
 
 	public virtual void Open(Player player)
 	{
+		player._openInventory2 = this;
 		Viewers.Add(player);
 		InventoryChange += OnInventoryChange;
 	}
 
 	public virtual void Close(Player player, bool serverInitiatedClosing = false)
 	{
+		player._openInventory2 = null;
 		Viewers.Remove(player);
 		InventoryChange -= OnInventoryChange;
 	}
@@ -144,14 +147,9 @@ public class Inventory2 : IInventory2
 		InventoryChange?.Invoke(player, this, slot, itemStack);
 	}
 	
-	private void OnInventoryChange(Player player, Inventory2 inventory, byte slot, Item itemStack)
+	private void OnInventoryChange(Player player, Inventory2 inventory, byte slot, Item item)
 	{
-		var sendSlot = McpeInventorySlot.CreateObject();
-		sendSlot.inventoryId = WindowsId;
-		sendSlot.slot = slot;
-		//sendSlot.uniqueid = itemStack.UniqueId;
-		sendSlot.item = itemStack;
-		player.SendPacket(sendSlot);
+		SetItem(slot, item);
 	}
 	
 	private NbtList GetSlots()

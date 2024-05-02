@@ -21,6 +21,7 @@
 // All Rights Reserved.
 #endregion
 
+using System.Collections.Generic;
 using MiNET.BlockEntities;
 using MiNET.Inventories.BlockEntities;
 using MiNET.Utils.Vectors;
@@ -28,28 +29,50 @@ using MiNET.Worlds;
 
 namespace MiNET.Inventories;
 
-public static class InventoryManager2
+public class InventoryManagerPerLevel
 {
+	/// <summary>
+	/// <c>Def</c> Blockentity inventories
+	/// </summary>
+	private static Dictionary<BlockCoordinates, Inventory2> _cacheInventories = new Dictionary<BlockCoordinates, Inventory2>();
+	private readonly Level _level;
+
+	/// <param name="level">Important for interacting with inventories at a specific level, although currently not relevant</param> // ToDo support for multiple levels
+	public InventoryManagerPerLevel(Level level)
+	{
+		_level = level;
+	}
+	
 	public static void OpenBlockInventory2(Player player, BlockCoordinates coordinates)
 	{
 		if (player.Level.GetBlockEntity(coordinates) is null) return;
 		var blockEntity = player.Level.GetBlockEntity(coordinates);
 
-		// CanOpenInventoryIfNotReset(player);
+		CanOpenInventoryIfNotReset(player);
 		
 		switch (blockEntity)
 		{
 			case ChestBlockEntity:
 			{
 				var chestInventory = new ChestInventory((player, blockEntity));
-				player._openInventory2 = chestInventory;
 				chestInventory.Open(player);
 				break;
 			}
 		}
 	}
 
-	public static void CanOpenInventoryIfNotReset(Player player)
+	public static Inventory2 TryToGetInventory(BlockCoordinates blockCoordinates)
+	{
+		lock (_cacheInventories)
+		{
+			if (_cacheInventories.TryGetValue(blockCoordinates, out Inventory2 inventory)) return inventory;
+			
+			
+		}
+		return null;
+	}
+
+	private static void CanOpenInventoryIfNotReset(Player player)
 	{
 		if (player._openInventory2 is not null) player._openInventory2.Close(player, true);
 	}

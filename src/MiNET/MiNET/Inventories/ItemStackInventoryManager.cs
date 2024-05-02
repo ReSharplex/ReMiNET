@@ -553,7 +553,7 @@ namespace MiNET.Inventories
 				case 26: // furnace
 				case 45: // blast furnace
 					if (_player._openInventory is Inventory inventory) item = inventory.GetSlot((byte) slot);
-					if (_player._openInventory2 is not null) _player._openInventory2.GetItem(slot);
+					if (_player._openInventory2 is not null) item = _player._openInventory2.GetItem(slot);
 					break;
 				default:
 					Log.Warn($"Unknown containerId: {containerId}");

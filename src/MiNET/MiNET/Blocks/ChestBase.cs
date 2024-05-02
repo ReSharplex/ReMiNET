@@ -57,7 +57,7 @@ namespace MiNET.Blocks
 		{
 			Log.Debug($"Opening chest inventory at {blockCoordinates}");
 			//player.OpenInventory(blockCoordinates);
-			InventoryManager2.OpenBlockInventory2(player, blockCoordinates);
+			InventoryManagerPerLevel.OpenBlockInventory2(player, blockCoordinates);
 			return true;
 		}
 	}

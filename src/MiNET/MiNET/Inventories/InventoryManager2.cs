@@ -1,5 +1,4 @@
 ﻿#region LICENSE
-
 // The contents of this file are subject to the Common Public Attribution
 // License Version 1.0. (the "License"); you may not use this file except in
 // compliance with the License. You may obtain a copy of the License at
@@ -18,47 +17,40 @@
 // The Original Developer is the Initial Developer.  The Initial Developer of
 // the Original Code is Niclas Olofsson.
 // 
-// All portions of the code written by Niclas Olofsson are Copyright (c) 2014-2020 Niclas Olofsson.
+// All portions of the code written by Niclas Olofsson are Copyright (c) 2014-2024 Niclas Olofsson.
 // All Rights Reserved.
-
 #endregion
 
-using System.Numerics;
-using log4net;
 using MiNET.BlockEntities;
-using MiNET.Inventories;
+using MiNET.Inventories.BlockEntities;
 using MiNET.Utils.Vectors;
 using MiNET.Worlds;
 
-namespace MiNET.Blocks
+namespace MiNET.Inventories;
+
+public static class InventoryManager2
 {
-	public abstract class ChestBase : Block
+	public static void OpenBlockInventory2(Player player, BlockCoordinates coordinates)
 	{
-		private static readonly ILog Log = LogManager.GetLogger(typeof(ChestBase));
+		if (player.Level.GetBlockEntity(coordinates) is null) return;
+		var blockEntity = player.Level.GetBlockEntity(coordinates);
 
-		public ChestBase(byte id) : base(id)
+		// CanOpenInventoryIfNotReset(player);
+		
+		switch (blockEntity)
 		{
-			FuelEfficiency = 15;
-			IsTransparent = true;
-			BlastResistance = 12.5f;
-			Hardness = 2.5f;
+			case ChestBlockEntity:
+			{
+				var chestInventory = new ChestInventory((player, blockEntity));
+				player._openInventory2 = chestInventory;
+				chestInventory.Open(player);
+				break;
+			}
 		}
+	}
 
-
-		/*public override bool PlaceBlock(Level world, Player player, BlockCoordinates blockCoordinates, BlockFace face, Vector3 faceCoords)
-		{
-			var chestBlockEntity = new ChestBlockEntity {Coordinates = Coordinates};
-			world.SetBlockEntity(chestBlockEntity);
-
-			return false;
-		}*/
-
-		public override bool Interact(Level world, Player player, BlockCoordinates blockCoordinates, BlockFace face, Vector3 faceCoord)
-		{
-			Log.Debug($"Opening chest inventory at {blockCoordinates}");
-			//player.OpenInventory(blockCoordinates);
-			InventoryManager2.OpenBlockInventory2(player, blockCoordinates);
-			return true;
-		}
+	public static void CanOpenInventoryIfNotReset(Player player)
+	{
+		if (player._openInventory2 is not null) player._openInventory2.Close(player, true);
 	}
 }

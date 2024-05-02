@@ -55,6 +55,7 @@ using MiNET.Utils.Vectors;
 using MiNET.Worlds;
 using Newtonsoft.Json;
 using System.IO.Compression;
+using MiNET.Inventories;
 
 namespace MiNET
 {
@@ -70,6 +71,7 @@ namespace MiNET
 		private ChunkCoordinates _currentChunkPosition;
 
 		internal IInventory _openInventory;
+		internal IInventory2 _openInventory2;
 		public PlayerInventory Inventory { get; set; }
 		public ItemStackInventoryManager ItemStackInventoryManager { get; set; }
 
@@ -3053,6 +3055,11 @@ namespace MiNET
 
 			lock (_inventorySync)
 			{
+				if (_openInventory2 is not null)
+				{
+					_openInventory2.Close(this);
+				}
+				
 				if (_openInventory is Inventory inventory)
 				{
 					_openInventory = null;

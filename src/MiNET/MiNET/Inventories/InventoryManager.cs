@@ -33,7 +33,7 @@ using MiNET.Utils;
 using MiNET.Utils.Vectors;
 using MiNET.Worlds;
 
-namespace MiNET
+namespace MiNET.Inventories
 {
 	public class InventoryManager
 	{

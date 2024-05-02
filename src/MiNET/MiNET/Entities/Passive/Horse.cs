@@ -28,6 +28,7 @@ using System.Numerics;
 using fNbt;
 using log4net;
 using MiNET.Entities.Behaviors;
+using MiNET.Inventories;
 using MiNET.Items;
 using MiNET.Net;
 using MiNET.Utils;

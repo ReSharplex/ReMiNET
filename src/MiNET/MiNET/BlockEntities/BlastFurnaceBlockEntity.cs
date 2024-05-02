@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using fNbt;
 using MiNET.Blocks;
+using MiNET.Inventories;
 using MiNET.Items;
 using MiNET.Net;
 using MiNET.Worlds;

@@ -32,7 +32,7 @@ using MiNET.Items;
 using MiNET.Utils;
 using Newtonsoft.Json.Linq;
 
-namespace MiNET
+namespace MiNET.Inventories
 {
 	public class ItemStackInventoryManager
 	{
@@ -553,6 +553,7 @@ namespace MiNET
 				case 26: // furnace
 				case 45: // blast furnace
 					if (_player._openInventory is Inventory inventory) item = inventory.GetSlot((byte) slot);
+					if (_player._openInventory2 is not null) _player._openInventory2.GetItem(slot);
 					break;
 				default:
 					Log.Warn($"Unknown containerId: {containerId}");
@@ -610,6 +611,7 @@ namespace MiNET
 				case 26: // furnace
 				case 45: // blast furnace
 					if (_player._openInventory is Inventory inventory) inventory.SetSlot(_player, (byte) slot, item);
+					if (_player._openInventory2 is not null) _player._openInventory2.SetItem(slot, item);
 					break;
 				default:
 					Log.Warn($"Unknown containerId: {containerId}");

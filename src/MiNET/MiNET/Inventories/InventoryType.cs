@@ -1,5 +1,4 @@
 ﻿#region LICENSE
-
 // The contents of this file are subject to the Common Public Attribution
 // License Version 1.0. (the "License"); you may not use this file except in
 // compliance with the License. You may obtain a copy of the License at
@@ -18,40 +17,51 @@
 // The Original Developer is the Initial Developer.  The Initial Developer of
 // the Original Code is Niclas Olofsson.
 // 
-// All portions of the code written by Niclas Olofsson are Copyright (c) 2014-2019 Niclas Olofsson.
+// All portions of the code written by Niclas Olofsson are Copyright (c) 2014-2024 Niclas Olofsson.
 // All Rights Reserved.
-
 #endregion
 
-using System.Collections.Generic;
-using System.Linq;
-using log4net;
-using MiNET.Items;
+namespace MiNET.Inventories;
 
-namespace MiNET
+public enum InventoryType
 {
-	public class CursorInventory
-	{
-		private static readonly ILog Log = LogManager.GetLogger(typeof(CursorInventory));
-
-		public List<Item> Slots { get; } = Enumerable.Repeat((Item) new ItemAir(), 51).ToList();
-
-		public Item Cursor
-		{
-			get => Slots[0];
-			set => Slots[0] = value;
-		}
-
-		public CursorInventory()
-		{
-		}
-
-		public void Clear()
-		{
-			for (int i = 0; i < Slots.Count; i++)
-			{
-				if (Slots[i] == null || Slots[i].Id != 0) Slots[i] = new ItemAir();
-			}
-		}
-	}
+	None = -9,
+	Inventory = -1,
+	Container = 0,
+	Workbench = 1,
+	Furnace = 2,
+	Enchantment = 3,
+	BrewingStand = 4,
+	Anvil = 5,
+	Dispenser = 6,
+	Dropper = 7,
+	Hopper = 8,
+	Cauldron = 9,
+	MinecartChest = 10,
+	MinecartHopper = 11,
+	Horse = 12,
+	Beacon = 13,
+	StructureEditor = 14,
+	Trading = 15,
+	CommandBlock = 16,
+	Jukebox = 17,
+	Armor = 18,
+	Hand = 19,
+	CompoundCreator = 20,
+	ElementConstructor = 21,
+	MaterialReducer = 22,
+	LabTable = 23,
+	Loom = 24,
+	Lectern = 25,
+	Grindstone = 26,
+	BlastFurnace = 27,
+	Smoker = 28,
+	Stonecutter = 29,
+	Cartography = 30,
+	Hud = 31,
+	JigsawEditor = 32,
+	SmithingTable = 33,
+	ChestBoat = 34,
+	DecoratedPot = 35,
+	Crafter = 36
 }

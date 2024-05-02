@@ -29,6 +29,7 @@ using log4net;
 using MiNET.Blocks;
 using MiNET.Entities;
 using MiNET.Entities.Projectiles;
+using MiNET.Inventories;
 using MiNET.Utils;
 using MiNET.Utils.Vectors;
 using MiNET.Worlds;

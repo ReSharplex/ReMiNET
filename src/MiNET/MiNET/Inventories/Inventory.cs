@@ -33,7 +33,7 @@ using MiNET.Items;
 using MiNET.Utils;
 using MiNET.Utils.Vectors;
 
-namespace MiNET
+namespace MiNET.Inventories
 {
 	public interface IInventory
 	{

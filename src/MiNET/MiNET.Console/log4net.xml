@@ -114,6 +114,10 @@
 		<layout type="MiNET.Console.JsonLayout"/>
 	</appender>
 
+	<logger name="MiNET.LevelDB.Database">
+		<level value="OFF" />
+	</logger>
+	
 	<root>
 		<level value="TRACE" />
 		<appender-ref ref="Console" />
@@ -121,4 +125,5 @@
 		<appender-ref ref="FileAppender" />
 		<!--<appender-ref ref="DebuggerAppender"/>-->
 	</root>
+	
 </log4net>

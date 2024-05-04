@@ -106,10 +106,19 @@
 
 	</appender>
 
+	<appender name="FileAppender" type="log4net.Appender.FileAppender">
+		<file value="log.json" />
+		<appendToFile value="true" />
+		<maximumFileSize value="50000KB" />
+		<maxSizeRollBackups value="2" />
+		<layout type="MiNET.Console.JsonLayout"/>
+	</appender>
+
 	<root>
 		<level value="TRACE" />
 		<appender-ref ref="Console" />
 		<appender-ref ref="RollingFile" />
+		<appender-ref ref="FileAppender" />
 		<!--<appender-ref ref="DebuggerAppender"/>-->
 	</root>
 </log4net>
